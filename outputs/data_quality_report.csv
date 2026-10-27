@@ -1,0 +1,15 @@
+Metric,Value
+Total source rows,337
+Rows with invalid dates,3
+Valid dated rows,334
+Unique recorded dates,334
+Duplicate dated rows,0
+Missing waste values,2
+Missing existing CO2 values,2
+Missing compost values,325
+Recorded compost values,12
+Missing leachate values,325
+Recorded leachate values,12
+Negative waste values,0
+Negative compost values,0
+Negative leachate values,0
