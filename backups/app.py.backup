@@ -1,0 +1,158 @@
+import streamlit as st
+import pandas as pd
+from pathlib import Path
+import plotly.express as px
+
+st.set_page_config(
+    page_title="Organic Waste Circularity Dashboard",
+    page_icon="♻️",
+    layout="wide"
+)
+
+st.title("♻️ Organic Waste Circularity & Carbon Dashboard")
+st.caption("Organic waste tracking, compost production, leachate and estimated emissions")
+
+DEFAULT_FILE = Path("data/MRCPS Organic Waste Tracking 2026.xlsx")
+
+@st.cache_data
+def load_excel(file):
+    return pd.read_excel(file, sheet_name="Waste Data 2026")
+
+uploaded = st.sidebar.file_uploader("Upload waste tracking Excel", type=["xlsx"])
+
+try:
+    if uploaded:
+        df = load_excel(uploaded)
+    elif DEFAULT_FILE.exists():
+        df = load_excel(DEFAULT_FILE)
+    else:
+        st.warning("Excel file not found. Upload your tracking workbook in the sidebar.")
+        st.stop()
+except Exception as e:
+    st.error(f"Could not read the Excel file: {e}")
+    st.info("Check that the workbook contains the sheet 'Waste Data 2026'.")
+    st.stop()
+
+df.columns = df.columns.astype(str).str.strip()
+
+required = ["Date", "Organic Waste (kg)", "CO2 Avoided (kg)",
+            "Compost (kg)", "Liquid Leachate (L)"]
+missing = [c for c in required if c not in df.columns]
+
+if missing:
+    st.error(f"Missing Excel columns: {', '.join(missing)}")
+    st.write("Columns found:", df.columns.tolist())
+    st.stop()
+
+df["Date"] = pd.to_datetime(df["Date"], errors="coerce", dayfirst=True)
+for col in required[1:]:
+    df[col] = pd.to_numeric(df[col], errors="coerce")
+
+df = df.dropna(subset=["Date"]).copy()
+df["Month"] = df["Date"].dt.to_period("M").astype(str)
+
+# Waste and CO2 are daily measurements.
+monthly = df.groupby("Month", as_index=False).agg(
+    Waste_kg=("Organic Waste (kg)", "sum"),
+    Existing_CO2_estimate_kg=("CO2 Avoided (kg)", "sum"),
+    Days_Recorded=("Date", "nunique")
+)
+
+# Compost and leachate are monthly production totals recorded once per month.
+monthly_production = (
+    df.dropna(subset=["Compost (kg)", "Liquid Leachate (L)"])
+      .groupby("Month", as_index=False)
+      .agg(
+          Compost_kg=("Compost (kg)", "sum"),
+          Leachate_L=("Liquid Leachate (L)", "sum")
+      )
+)
+
+monthly = monthly.merge(monthly_production, on="Month", how="left")
+monthly[["Compost_kg", "Leachate_L"]] = (
+    monthly[["Compost_kg", "Leachate_L"]].fillna(0)
+)
+
+# Excel has monthly totals repeated on only one row per month.
+# Group sum preserves each recorded monthly total.
+total_waste = df["Organic Waste (kg)"].sum()
+total_co2 = df["CO2 Avoided (kg)"].sum()
+total_compost = monthly["Compost_kg"].sum()
+total_leachate = monthly["Leachate_L"].sum()
+months = df["Month"].nunique()
+
+st.sidebar.success(f"Loaded {len(df)} rows")
+st.sidebar.write(f"Months found: {months}")
+st.sidebar.caption("CO₂ figures use the workbook's existing estimate, not independently verified emissions factors.")
+
+a, b, c, d = st.columns(4)
+a.metric("Organic Waste", f"{total_waste:,.0f} kg")
+b.metric("Existing CO₂ Estimate", f"{total_co2:,.1f} kg CO₂e")
+c.metric("Compost Produced", f"{total_compost:,.0f} kg")
+d.metric("Liquid Leachate", f"{total_leachate:,.0f} L")
+
+st.divider()
+
+left, right = st.columns(2)
+
+with left:
+    st.subheader("Monthly Organic Waste")
+    fig = px.bar(
+        monthly, x="Month", y="Waste_kg",
+        labels={"Month": "Month", "Waste_kg": "Organic waste (kg)"},
+        title="Organic waste recorded per month"
+    )
+    fig.update_layout(xaxis_tickangle=-45)
+    st.plotly_chart(fig, use_container_width=True)
+
+with right:
+    st.subheader("Monthly CO₂ Estimate")
+    fig = px.line(
+        monthly, x="Month", y="Existing_CO2_estimate_kg",
+        markers=True,
+        labels={"Month": "Month", "Existing_CO2_estimate_kg": "CO₂ estimate (kg CO₂e)"},
+        title="Workbook-based CO₂ estimate"
+    )
+    fig.update_layout(xaxis_tickangle=-45)
+    st.plotly_chart(fig, use_container_width=True)
+
+left, right = st.columns(2)
+
+with left:
+    st.subheader("Monthly Compost Production")
+    fig = px.bar(
+        monthly, x="Month", y="Compost_kg",
+        labels={"Month": "Month", "Compost_kg": "Compost (kg)"},
+        title="Monthly compost totals"
+    )
+    fig.update_layout(xaxis_tickangle=-45)
+    st.plotly_chart(fig, use_container_width=True)
+
+with right:
+    st.subheader("Monthly Liquid Leachate")
+    fig = px.bar(
+        monthly, x="Month", y="Leachate_L",
+        labels={"Month": "Month", "Leachate_L": "Leachate (L)"},
+        title="Monthly liquid leachate totals"
+    )
+    fig.update_layout(xaxis_tickangle=-45)
+    st.plotly_chart(fig, use_container_width=True)
+
+st.subheader("Monthly KPI Table")
+st.dataframe(monthly, use_container_width=True, hide_index=True)
+
+st.subheader("Data Preview")
+st.dataframe(df, use_container_width=True, hide_index=True)
+
+st.download_button(
+    "Download Monthly Summary CSV",
+    data=monthly.to_csv(index=False).encode("utf-8"),
+    file_name="monthly_circularity_summary.csv",
+    mime="text/csv"
+)
+
+st.caption(
+    "Method note: Compost and leachate are treated as monthly production totals. "
+    "The CO₂ value is the estimate already recorded in the workbook; its factor and "
+    "methodology should be validated before scientific or carbon-credit claims."
+)
