@@ -445,6 +445,30 @@ with tab_overview:
         "It should not be interpreted as verified emissions reductions."
     )
 
+    st.divider()
+    st.subheader("Provisional Carbon Scenario Calculator")
+    st.caption(
+        "Illustrative estimate only—not a verified emissions reduction. "
+        "This calculator does not change the workbook values."
+    )
+    waste_scenario_kg = st.number_input(
+        "Organic waste processed (kg)",
+        min_value=0.0,
+        value=100.0,
+        step=10.0,
+        key="carbon_scenario_waste_kg"
+    )
+    provisional_factor = 0.5
+    scenario_co2e_kg = waste_scenario_kg * provisional_factor
+    st.metric(
+        "Illustrative avoided emissions",
+        f"{scenario_co2e_kg:,.1f} kg CO₂e"
+    )
+    st.caption(
+        f"Assumption: {provisional_factor:.2f} kg CO₂e per kg of organic waste. "
+        "Validate the factor and system boundaries before scientific reporting."
+    )
+
 with tab_data:
     st.subheader("Monthly KPI table")
 
