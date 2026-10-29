@@ -551,6 +551,23 @@ with tab_quality:
             except Exception as e:
                 st.error(f"Could not save the measurement: {e}")
 
+
+    st.divider()
+    st.subheader("Saved Compost Quality Records")
+
+    try:
+        worksheet = get_quality_worksheet()
+        records = worksheet.get_all_records()
+
+        if records:
+            records_df = pd.DataFrame(records)
+            st.dataframe(records_df, width="stretch")
+            st.caption(f"Total saved records: {len(records_df)}")
+        else:
+            st.info("No compost quality records have been saved yet.")
+    except Exception as e:
+        st.error(f"Could not load saved measurements: {e}")
+
 with tab_data:
     st.subheader("Monthly KPI table")
 
