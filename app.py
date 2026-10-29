@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 import plotly.express as px
+import gspread
 
 st.set_page_config(
     page_title="Organic Waste Circularity Dashboard",
@@ -12,6 +13,14 @@ st.set_page_config(
 
 DEFAULT_FILE = Path("data/MRCPS Organic Waste Tracking 2026.xlsx")
 SHEET_NAME = "Waste Data 2026"
+
+
+def get_quality_worksheet():
+    credentials = dict(st.secrets["gcp_service_account"])
+    client = gspread.service_account_from_dict(credentials)
+    spreadsheet_id = st.secrets["sheets"]["spreadsheet_id"]
+    spreadsheet = client.open_by_key(spreadsheet_id)
+    return spreadsheet.sheet1
 
 REQUIRED = [
     "Date",
@@ -472,44 +481,75 @@ with tab_overview:
 
 with tab_quality:
     st.subheader("Compost Quality Monitoring")
-    st.caption(
-        "Enter measured values only. This form does not add records to the Excel workbook."
-    )
+    st.caption("Save measured compost quality records to Google Sheets.")
 
     with st.form("compost_quality_form"):
-        measurement_date = st.text_input("Measurement date (YYYY-MM-DD)", placeholder="2026-10-30")
+        measurement_date = st.text_input(
+            "Measurement date (YYYY-MM-DD)",
+            placeholder="2026-10-30"
+        )
         sample_id = st.text_input("Sample ID (optional)")
         ph_value = st.number_input(
-            "pH", min_value=0.0, max_value=14.0, value=None, step=0.1,
-            placeholder="Enter measured pH"
+            "pH", min_value=0.0, max_value=14.0,
+            value=None, step=0.1, placeholder="Enter measured pH"
         )
         moisture_pct = st.number_input(
-            "Moisture (%)", min_value=0.0, max_value=100.0, value=None, step=1.0,
-            placeholder="Enter measured moisture"
+            "Moisture (%)", min_value=0.0, max_value=100.0,
+            value=None, step=1.0, placeholder="Enter measured moisture"
         )
         temperature_c = st.number_input(
-            "Temperature (°C)", min_value=-20.0, max_value=100.0, value=None, step=0.5,
-            placeholder="Enter measured temperature"
+            "Temperature (°C)", min_value=-20.0, max_value=100.0,
+            value=None, step=0.5, placeholder="Enter measured temperature"
         )
         cn_ratio = st.number_input(
-            "C:N ratio", min_value=0.0, max_value=500.0, value=None, step=1.0,
-            placeholder="Enter measured C:N ratio"
+            "C:N ratio", min_value=0.0, max_value=500.0,
+            value=None, step=1.0, placeholder="Enter measured C:N ratio"
         )
         notes = st.text_area("Notes (optional)")
-        submitted = st.form_submit_button("Review measurement")
+        submitted = st.form_submit_button("Save measurement to Google Sheets")
 
     if submitted:
-        st.write("**Measurement review**")
-        st.write(f"Date: {measurement_date}")
-        if sample_id.strip():
-            st.write(f"Sample ID: {sample_id.strip()}")
-        st.write(f"pH: {ph_value if ph_value is not None else 'Not entered'}")
-        st.write(f"Moisture: {moisture_pct if moisture_pct is not None else 'Not entered'}")
-        st.write(f"Temperature: {temperature_c if temperature_c is not None else 'Not entered'}")
-        st.write(f"C:N ratio: {cn_ratio if cn_ratio is not None else 'Not entered'}")
-        if notes.strip():
-            st.write(f"Notes: {notes.strip()}")
-        st.info("This is a review only. The measurement has not been saved.")
+        parsed_date = pd.to_datetime(
+            measurement_date.strip(),
+            format="%Y-%m-%d",
+            errors="coerce"
+        )
+
+        if pd.isna(parsed_date):
+            st.error("Enter a valid date in YYYY-MM-DD format.")
+        else:
+            expected_headers = [
+                "Measurement Date", "Sample ID", "pH",
+                "Moisture (%)", "Temperature (°C)", "C:N Ratio", "Notes"
+            ]
+
+            values = [
+                parsed_date.strftime("%Y-%m-%d"),
+                sample_id.strip(),
+                ph_value if ph_value is not None else "",
+                moisture_pct if moisture_pct is not None else "",
+                temperature_c if temperature_c is not None else "",
+                cn_ratio if cn_ratio is not None else "",
+                notes.strip()
+            ]
+
+            try:
+                worksheet = get_quality_worksheet()
+                current_headers = worksheet.row_values(1)
+
+                if current_headers != expected_headers:
+                    st.error(
+                        "Google Sheet headers do not match. "
+                        "Please check the first row of your spreadsheet."
+                    )
+                else:
+                    worksheet.append_row(
+                        values,
+                        value_input_option="USER_ENTERED"
+                    )
+                    st.success("Measurement saved successfully to Google Sheets.")
+            except Exception as e:
+                st.error(f"Could not save the measurement: {e}")
 
 with tab_data:
     st.subheader("Monthly KPI table")
