@@ -347,11 +347,12 @@ chart_colors = {
     "gold": "#d3a43b"
 }
 
-tab_overview, tab_data, tab_raw, tab_method, tab_ai = st.tabs([
+tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai = st.tabs([
     "📈 Overview",
     "📋 Monthly data",
     "🗂️ Raw data",
     "🔬 Methodology",
+    "🧪 Compost Quality",
     "🤖 AI Analyst"
 ])
 
@@ -468,6 +469,47 @@ with tab_overview:
         f"Assumption: {provisional_factor:.2f} kg CO₂e per kg of organic waste. "
         "Validate the factor and system boundaries before scientific reporting."
     )
+
+with tab_quality:
+    st.subheader("Compost Quality Monitoring")
+    st.caption(
+        "Enter measured values only. This form does not add records to the Excel workbook."
+    )
+
+    with st.form("compost_quality_form"):
+        measurement_date = st.text_input("Measurement date (YYYY-MM-DD)", placeholder="2026-10-30")
+        sample_id = st.text_input("Sample ID (optional)")
+        ph_value = st.number_input(
+            "pH", min_value=0.0, max_value=14.0, value=None, step=0.1,
+            placeholder="Enter measured pH"
+        )
+        moisture_pct = st.number_input(
+            "Moisture (%)", min_value=0.0, max_value=100.0, value=None, step=1.0,
+            placeholder="Enter measured moisture"
+        )
+        temperature_c = st.number_input(
+            "Temperature (°C)", min_value=-20.0, max_value=100.0, value=None, step=0.5,
+            placeholder="Enter measured temperature"
+        )
+        cn_ratio = st.number_input(
+            "C:N ratio", min_value=0.0, max_value=500.0, value=None, step=1.0,
+            placeholder="Enter measured C:N ratio"
+        )
+        notes = st.text_area("Notes (optional)")
+        submitted = st.form_submit_button("Review measurement")
+
+    if submitted:
+        st.write("**Measurement review**")
+        st.write(f"Date: {measurement_date}")
+        if sample_id.strip():
+            st.write(f"Sample ID: {sample_id.strip()}")
+        st.write(f"pH: {ph_value if ph_value is not None else 'Not entered'}")
+        st.write(f"Moisture: {moisture_pct if moisture_pct is not None else 'Not entered'}")
+        st.write(f"Temperature: {temperature_c if temperature_c is not None else 'Not entered'}")
+        st.write(f"C:N ratio: {cn_ratio if cn_ratio is not None else 'Not entered'}")
+        if notes.strip():
+            st.write(f"Notes: {notes.strip()}")
+        st.info("This is a review only. The measurement has not been saved.")
 
 with tab_data:
     st.subheader("Monthly KPI table")
