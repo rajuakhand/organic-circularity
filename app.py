@@ -494,10 +494,23 @@ with tab_method:
 - Rows containing both production values are grouped by month.
 - The monthly values are summed once from the rows recorded in the workbook.
 
-**CO₂ estimate**
+**CO₂ estimate — workbook values**
 - The dashboard sums the existing values in `CO2 Avoided (kg)`.
-- The emission factor and calculation methodology have not been independently validated here.
-- Treat this as a workbook-based estimate, not verified carbon savings or a carbon-credit claim.
+- The sample records are consistent with a provisional factor of 0.5 kg CO₂e per kg of organic waste.
+- Existing workbook values are retained; this dashboard does not silently recalculate or overwrite them.
+
+**Provisional carbon scenario — not a verified result**
+- Formula: estimated avoided emissions = organic waste processed (kg) × 0.5 kg CO₂e/kg.
+- Example: 100 kg × 0.5 = 50 kg CO₂e estimated avoided emissions.
+- This factor is a simplified pilot assumption, not a validated site-specific emission factor.
+- A defensible estimate must compare the landfill baseline with composting emissions using consistent system boundaries, waste characteristics, methane and nitrous oxide factors, and the selected IPCC GWP convention.
+- The cited values in project notes (4 g CH₄/kg for wet waste, 10 g CH₄/kg for dry waste, and a landfill baseline around 0.60 kg CO₂e/kg) require verification against the original IPCC and EPA WARM documents before scientific reporting.
+- Do not describe scenario results as measured reductions, independently verified savings, or carbon credits.
+
+**Research references to verify**
+- IPCC, 2006 Guidelines for National Greenhouse Gas Inventories, Volume 5 (Waste), Chapter 4: Biological Treatment of Solid Waste.
+- US EPA, Waste Reduction Model (WARM), Food Waste material category. Confirm the model version and factor before use.
+
 
 **Data quality**
 - Rows with invalid dates are excluded from monthly reporting.
@@ -690,7 +703,7 @@ with tab_ai:
             from google import genai
 
             api_key = st.secrets["GEMINI_API_KEY"]
-            client = genai.Client(api_key=api_key, http_options={"timeout": 30000})
+            client = genai.Client(api_key=api_key, http_options={"timeout": 120000})
 
             context_columns = [
                 col for col in [
@@ -703,9 +716,9 @@ with tab_ai:
                 if col in monthly.columns
             ]
 
-            monthly_csv = monthly[context_columns].to_csv(index=False)
+            monthly_csv = monthly[context_columns].tail(12).to_csv(index=False)
 
-            recent_history = st.session_state["gemini_chat_history"][-8:]
+            recent_history = st.session_state["gemini_chat_history"][-4:]
             conversation = "\n".join(
                 f"{'User' if item['role'] == 'user' else 'Assistant'}: "
                 f"{item['content']}"
