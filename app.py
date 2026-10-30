@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 import plotly.express as px
 import gspread
+from carbon_accounting import render_carbon_accounting
 
 st.set_page_config(
     page_title="Organic Waste Circularity Dashboard",
@@ -221,7 +222,6 @@ st.markdown("""
 
 
 # ---------- Data loading ----------
-@st.cache_data
 def load_excel(file_source):
     return pd.read_excel(file_source, sheet_name=SHEET_NAME)
 
@@ -356,13 +356,14 @@ chart_colors = {
     "gold": "#d3a43b"
 }
 
-tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai = st.tabs([
+tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai, tab_carbon = st.tabs([
     "📈 Overview",
     "📋 Monthly data",
     "🗂️ Raw data",
     "🔬 Methodology",
     "🧪 Compost Quality",
-    "🤖 AI Analyst"
+    "🤖 AI Analyst",
+    "🌍 Carbon Accounting"
 ])
 
 with tab_overview:
@@ -456,7 +457,7 @@ with tab_overview:
     )
 
     st.divider()
-    st.subheader("Provisional Carbon Scenario Calculator")
+    st.subheader("Legacy Illustrative Carbon Scenario (Unverified)")
     st.caption(
         "Illustrative estimate only—not a verified emissions reduction. "
         "This calculator does not change the workbook values."
@@ -471,13 +472,16 @@ with tab_overview:
     provisional_factor = 0.5
     scenario_co2e_kg = waste_scenario_kg * provisional_factor
     st.metric(
-        "Illustrative avoided emissions",
+        "Illustrative scenario only (not verified)",
         f"{scenario_co2e_kg:,.1f} kg CO₂e"
     )
     st.caption(
         f"Assumption: {provisional_factor:.2f} kg CO₂e per kg of organic waste. "
         "Validate the factor and system boundaries before scientific reporting."
     )
+
+with tab_carbon:
+    render_carbon_accounting(df)
 
 with tab_quality:
     st.subheader("Compost Quality Monitoring")
