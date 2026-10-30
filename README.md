@@ -35,7 +35,6 @@ The workbook's legacy CO₂ estimate is retained separately and is not verified 
 ## 🛠️ Technology
 
 Python, Streamlit, Pandas, Plotly, Excel, Google Sheets, and Google Gemini API.
-
 ## 🚀 Run Locally
 
 ```bash
