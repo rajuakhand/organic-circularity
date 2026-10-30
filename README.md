@@ -1,4 +1,4 @@
-cd ~/Projects/organic-circularity && git switch master && cat > README.md <<'EOF'
+
 # 🌱 Organic Circularity Dashboard
 
 ### Organic Waste Tracking, Performance Monitoring & Carbon Accounting
