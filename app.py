@@ -349,7 +349,8 @@ st.markdown(
 k1, k2, k3, k4 = st.columns(4)
 
 k1.metric("Organic Waste", f"{total_waste:,.0f} kg")
-k2.metric("Workbook CO₂ Estimate (legacy)", f"{total_co2:,.1f} kg CO₂e")
+ipcc_total = (total_waste * 4 / 1000 * 28) + (total_waste * 0.24 / 1000 * 265)
+k2.metric("IPCC Tier 1 CO₂e", f"{ipcc_total:,.1f} kg CO₂e")
 k3.metric("Compost Produced", f"{total_compost:,.0f} kg")
 k4.metric("Liquid Leachate", f"{total_leachate:,.0f} L")
 
