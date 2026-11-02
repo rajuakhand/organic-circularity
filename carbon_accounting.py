@@ -125,7 +125,13 @@ def render_carbon_accounting(df):
             "Forecast / planned": "#f0a202",
         },
     )
-    st.plotly_chart(fig_daily_co2e, use_container_width=True)
+    fig_pie = px.pie(
+        names=["CH₄ (kg CO₂e)", "N₂O (kg CO₂e)"],
+        values=[daily["CH4 (kg CO2e)"].sum(), daily["N2O (kg CO2e)"].sum()],
+        title="Emissions Share",
+        color_discrete_sequence=["#238b45", "#f0a202"],
+    )
+    st.plotly_chart(fig_pie, use_container_width=True)
 
     st.markdown("### Monthly emissions trend")
     monthly = (
