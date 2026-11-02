@@ -620,6 +620,12 @@ with tab_method:
 - US EPA, Waste Reduction Model (WARM), Food Waste material category. Confirm the model version and factor before use.
 
 
+**IPCC Tier 1 reference**
+- Source: IPCC 2006 Guidelines, Vol 5 Waste, Ch 4 Biological Treatment.
+- Table 4.1 default factors: CH₄ 4 g/kg wet waste; N₂O 0.24 g/kg wet waste.
+- GWP100 (AR5): CH₄=28, N₂O=265.
+- These are Tier 1 defaults, not direct measurements.
+
 **Data quality**
 - Rows with invalid dates are excluded from monthly reporting.
 - Required column names are checked before analysis.
