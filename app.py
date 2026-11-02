@@ -884,7 +884,7 @@ Answer the latest user question clearly, using relevant numbers where possible.
             with st.chat_message("assistant"):
                 with st.spinner("Gemini is analysing your data..."):
                     response = client.interactions.create(
-                        model="gemini-2.0-flash",
+                        model="gemini-3.8-flash",
                         input=prompt,
                     )
                     answer = response.output_text or (
