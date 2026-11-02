@@ -349,7 +349,7 @@ st.markdown(
 k1, k2, k3, k4 = st.columns(4)
 
 k1.metric("Organic Waste", f"{total_waste:,.0f} kg")
-k2.metric("Existing CO₂ Estimate", f"{total_co2:,.1f} kg CO₂e")
+k2.metric("Workbook CO₂ Estimate (legacy)", f"{total_co2:,.1f} kg CO₂e")
 k3.metric("Compost Produced", f"{total_compost:,.0f} kg")
 k4.metric("Liquid Leachate", f"{total_leachate:,.0f} L")
 
@@ -884,7 +884,7 @@ Answer the latest user question clearly, using relevant numbers where possible.
             with st.chat_message("assistant"):
                 with st.spinner("Gemini is analysing your data..."):
                     response = client.interactions.create(
-                        model="gemini-3.8-flash",
+                        model="gemini-2.0-flash",
                         input=prompt,
                     )
                     answer = response.output_text or (
