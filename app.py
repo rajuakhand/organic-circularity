@@ -489,12 +489,19 @@ with tab_impact:
         color_discrete_sequence=["#238b45"],
     )
     st.markdown("""
-**Soil & Water Impact Calculator**
-- Compost diye soil organic matter improvement estimate
-- Water retention potential
-- Chemical fertilizer replacement estimate
-- Soil erosion reduction potential
+**Financial Benefit Calculator**
+- Compost market value
+- Waste disposal cost saved
+- Fertilizer purchase cost saved
+- Biogas/electricity savings
+- Monthly and annual ROI
 """)
+    compost_price = st.number_input("Compost price (INR/kg)", value=5.0, step=0.5)
+    disposal_cost = st.number_input("Disposal cost saved (INR/kg)", value=2.0, step=0.5)
+    fertilizer_saved = st.number_input("Fertilizer saved (INR/kg)", value=3.0, step=0.5)
+    st.metric("Estimated compost value", f"₹{total_compost*compost_price:,.0f}")
+    st.metric("Estimated disposal saved", f"₹{total_waste*disposal_cost:,.0f}")
+    st.metric("Estimated fertilizer saved", f"₹{total_compost*fertilizer_saved:,.0f}")
 
 with tab_carbon:
     render_carbon_accounting(df)
