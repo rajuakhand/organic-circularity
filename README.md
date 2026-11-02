@@ -1,6 +1,6 @@
 # 🌱 Organic Circularity Dashboard
 
-### Organic Waste Tracking, Performance Monitoring & Carbon Accounting
+**Organic Waste Tracking, Performance Monitoring & Carbon Accounting**
 
 An interactive Python and Streamlit application for organic waste tracking, performance monitoring, compost quality monitoring, and IPCC Tier 1 composting process-emissions estimates.
 
@@ -17,6 +17,7 @@ An interactive Python and Streamlit application for organic waste tracking, perf
 - Data-quality reporting
 - Compost quality monitoring with Google Sheets
 - IPCC Tier 1 carbon accounting with daily and monthly charts
+- People & Planet Impact verified section
 - Optional AI-assisted analysis
 
 ## 🌍 Carbon Accounting (Primary)
@@ -43,3 +44,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+## 📄 License
+
+MIT — see LICENSE.
+
+## 👤 Author
+
+Abdul Gaffar Raju Akhand
+GitHub: [@rajuakhand](https://github.com/rajuakhand)
