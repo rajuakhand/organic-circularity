@@ -481,7 +481,14 @@ with tab_impact:
 
 **Conservative note:** Tier 1 result 2.05 t CO₂e; uncontrolled landfill upper bound ~15.8 t CO₂e.
 """)
-    st.caption("Sources: IPCC 2006/2019, EPA equivalencies, UNEP Food Waste Index 2024, Our World in Data, US EPA compost values, PIB/CEA.")
+    import plotly.express as px
+    fig_impact = px.bar(
+        x=["Trees (34)", "Car-years (0.48)", "Driving km (8400/1000)", "Person-year (0.93)"],
+        y=[34, 0.48, 8.4, 0.93],
+        title="People & Planet Impact (scaled)",
+        color_discrete_sequence=["#238b45"],
+    )
+    st.plotly_chart(fig_impact, use_container_width=True)
 
 with tab_carbon:
     render_carbon_accounting(df)
