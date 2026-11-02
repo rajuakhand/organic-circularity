@@ -355,6 +355,10 @@ k3.metric("Compost Produced", f"{total_compost:,.0f} kg")
 k4.metric("Liquid Leachate", f"{total_leachate:,.0f} L")
 
 st.write("")
+r1, r2, r3 = st.columns(3)
+r1.metric("Compost Yield Ratio", f"{(total_compost/total_waste*100) if total_waste else 0:,.1f} %")
+r2.metric("Leachate Ratio", f"{(total_leachate/total_waste*100) if total_waste else 0:,.1f} %")
+r3.metric("Waste Diversion", f"{total_waste:,.0f} kg")
 
 # ---------- Chart configuration ----------
 chart_template = "plotly_white"
