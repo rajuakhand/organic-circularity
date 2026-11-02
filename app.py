@@ -306,6 +306,14 @@ total_compost = monthly["Compost_kg"].sum()
 total_leachate = monthly["Leachate_L"].sum()
 month_count = df["Month"].nunique()
 
+# ---------- Emission factor inputs ----------
+st.sidebar.divider()
+st.sidebar.markdown("### ⚙️ Emission factors")
+st.session_state["ch4_factor_g_per_kg"] = st.sidebar.number_input("CH₄ (g/kg wet waste)", value=4.0, step=0.1)
+st.session_state["n2o_factor_g_per_kg"] = st.sidebar.number_input("N₂O (g/kg wet waste)", value=0.24, step=0.01)
+st.session_state["ch4_gwp"] = st.sidebar.number_input("CH₄ GWP100", value=28, step=1)
+st.session_state["n2o_gwp"] = st.sidebar.number_input("N₂O GWP100", value=265, step=1)
+
 # ---------- Sidebar information ----------
 st.sidebar.divider()
 st.sidebar.markdown("### 📁 Data source")

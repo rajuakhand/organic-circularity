@@ -4,6 +4,11 @@ import streamlit as st
 
 
 def render_carbon_accounting(df):
+    ch4_factor = st.session_state.get("ch4_factor_g_per_kg", 4.0)
+    n2o_factor = st.session_state.get("n2o_factor_g_per_kg", 0.24)
+    ch4_gwp = st.session_state.get("ch4_gwp", 28)
+    n2o_gwp = st.session_state.get("n2o_gwp", 265)
+
     st.subheader("IPCC Tier 1 – Carbon Accounting")
     st.caption(
         "Daily calculations are generated automatically from the loaded Excel data. "
@@ -23,10 +28,10 @@ def render_carbon_accounting(df):
         return
 
     # IPCC Tier 1 calculations
-    daily["CH4 (kg)"] = daily["Organic Waste (kg)"] * 4 / 1000
-    daily["N2O (kg)"] = daily["Organic Waste (kg)"] * 0.24 / 1000
-    daily["CH4 (kg CO2e)"] = daily["CH4 (kg)"] * 28
-    daily["N2O (kg CO2e)"] = daily["N2O (kg)"] * 265
+    daily["CH4 (kg)"] = daily["Organic Waste (kg)"] * ch4_factor / 1000
+    daily["N2O (kg)"] = daily["Organic Waste (kg)"] * n2o_factor / 1000
+    daily["CH4 (kg CO2e)"] = daily["CH4 (kg)"] * ch4_gwp
+    daily["N2O (kg CO2e)"] = daily["N2O (kg)"] * n2o_gwp
     daily["Total CO2e (kg)"] = (
         daily["CH4 (kg CO2e)"] + daily["N2O (kg CO2e)"]
     )
