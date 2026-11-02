@@ -504,9 +504,10 @@ with tab_impact:
 - Biogas/electricity savings
 - Monthly and annual ROI
 """)
-    compost_price = st.number_input("Compost price (INR/kg)", value=5.0, step=0.5)
-    disposal_cost = st.number_input("Disposal cost saved (INR/kg)", value=2.0, step=0.5)
-    fertilizer_saved = st.number_input("Fertilizer saved (INR/kg)", value=3.0, step=0.5)
+    compost_price = st.number_input("Compost price (INR/kg)", value=0.0, step=0.5)
+    disposal_cost = st.number_input("Disposal cost saved (INR/kg)", value=0.0, step=0.5)
+    fertilizer_saved = st.number_input("Fertilizer saved (INR/kg)", value=0.0, step=0.5)
+    st.caption("Enter verified prices; no default assumptions are used.")
     st.metric("Estimated compost value", f"₹{total_compost*compost_price:,.0f}")
     st.metric("Estimated disposal saved", f"₹{total_waste*disposal_cost:,.0f}")
     st.metric("Estimated fertilizer saved", f"₹{total_compost*fertilizer_saved:,.0f}")
