@@ -632,7 +632,8 @@ with tab_method:
 - GWP100 (AR5): CH₄=28, N₂O=265.
 - These are Tier 1 defaults, not direct measurements.
 
-**Data quality**
+**Cost-benefit**
+- Cost-benefit analysis requires verified cost and benefit data.
 - Rows with invalid dates are excluded from monthly reporting.
 - Required column names are checked before analysis.
 - Numeric columns are converted to numeric values where possible.
