@@ -370,9 +370,9 @@ chart_colors = {
 }
 
 tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai, tab_carbon, tab_impact = st.tabs([
-    "📈 Overview",
-    "📋 Monthly data",
-    "🗂️ Raw data",
+    "📈 Overview & KPIs",
+    "📋 Monthly Data",
+    "🗂️ Raw Data",
     "🔬 Methodology",
     "🧪 Compost Quality",
     "🤖 AI Analyst",
