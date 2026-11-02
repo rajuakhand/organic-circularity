@@ -630,10 +630,11 @@ with tab_method:
 - Rows containing both production values are grouped by month.
 - The monthly values are summed once from the rows recorded in the workbook.
 
-**CO₂ estimate — workbook values**
-- The dashboard sums the existing values in `CO2 Avoided (kg)`.
-- The sample records are consistent with a provisional factor of 0.5 kg CO₂e per kg of organic waste.
-- Existing workbook values are retained; this dashboard does not silently recalculate or overwrite them.
+**CO₂ estimate — IPCC Tier 1**
+- Primary metric uses IPCC Tier 1 factors: CH₄ 4 g/kg wet waste, N₂O 0.24 g/kg wet waste.
+- GWP100: CH₄=28, N₂O=265 (IPCC AR5).
+- Formula: (waste×4/1000×28)+(waste×0.24/1000×265).
+- Legacy 0.5 factor is not used for the main metric.
 
 **Provisional carbon scenario — not a verified result**
 - Formula: estimated avoided emissions = organic waste processed (kg) × 0.5 kg CO₂e/kg.
