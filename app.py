@@ -369,14 +369,15 @@ chart_colors = {
     "gold": "#d3a43b"
 }
 
-tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai, tab_carbon = st.tabs([
+tab_overview, tab_data, tab_raw, tab_method, tab_quality, tab_ai, tab_carbon, tab_impact = st.tabs([
     "📈 Overview",
     "📋 Monthly data",
     "🗂️ Raw data",
     "🔬 Methodology",
     "🧪 Compost Quality",
     "🤖 AI Analyst",
-    "🌍 Carbon Accounting"
+    "🌍 Carbon Accounting",
+    "🌱 People & Planet Impact"
 ])
 
 with tab_overview:
@@ -468,6 +469,19 @@ with tab_overview:
         "Note: the CO₂ chart shows the workbook's existing estimate. "
         "It should not be interpreted as verified emissions reductions."
     )
+
+with tab_impact:
+    st.subheader("People & Planet Impact — Verified Calculation")
+    st.markdown("""
+**People served (waste-handling reach):** This batch (11,688 kg) equals ~212 people's annual household food waste (UNEP 2024: 55 kg/person/yr).
+
+**Carbon benefit (2,052.4 kg CO₂e):** ≈ 34 urban trees for 1 year; ≈ 0.48 car-years; ≈ 8,400 km driving; ≈ 0.93 of one average Indian person's annual CO₂; ≈ 2,500 kWh electricity.
+
+**Soil & water:** 1,865 kg compost can hold up to 5× its weight in water; +35–57% water-holding; up to 97% erosion reduction; 524 L leachate captured.
+
+**Conservative note:** Tier 1 result 2.05 t CO₂e; uncontrolled landfill upper bound ~15.8 t CO₂e.
+""")
+    st.caption("Sources: IPCC 2006/2019, EPA equivalencies, UNEP Food Waste Index 2024, Our World in Data, US EPA compost values, PIB/CEA.")
 
 with tab_carbon:
     render_carbon_accounting(df)
