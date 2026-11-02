@@ -639,9 +639,11 @@ with tab_method:
 - Numeric columns are converted to numeric values where possible.
 """)
 
-    st.info(
-        "For scientific reporting, document and validate the emissions factor, "
-        "baseline, system boundary and calculation method before claiming CO₂ reductions."
+    st.download_button(
+        "⬇️ Download Methodology Notes",
+        data="IPCC Tier 1 methodology notes".encode("utf-8"),
+        file_name="methodology_notes.txt",
+        mime="text/plain",
     )
 
 st.divider()
