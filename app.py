@@ -488,7 +488,13 @@ with tab_impact:
         title="People & Planet Impact (scaled)",
         color_discrete_sequence=["#238b45"],
     )
-    st.plotly_chart(fig_impact, use_container_width=True)
+    st.markdown("""
+**Soil & Water Impact Calculator**
+- Compost diye soil organic matter improvement estimate
+- Water retention potential
+- Chemical fertilizer replacement estimate
+- Soil erosion reduction potential
+""")
 
 with tab_carbon:
     render_carbon_accounting(df)
