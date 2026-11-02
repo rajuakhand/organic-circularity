@@ -489,6 +489,14 @@ with tab_impact:
         color_discrete_sequence=["#238b45"],
     )
     st.markdown("""
+**Soil & Water Impact Calculator**
+- Compost diye soil organic matter improvement estimate
+- Water retention potential
+- Chemical fertilizer replacement estimate
+- Soil erosion reduction potential
+""")
+
+    st.markdown("""
 **Financial Benefit Calculator**
 - Compost market value
 - Waste disposal cost saved
